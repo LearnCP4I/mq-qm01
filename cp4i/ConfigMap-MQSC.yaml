@@ -5,7 +5,7 @@ metadata:
   namespace: cp4i
 data:
   nativeha.mqsc: |
-    define qlocal(request1) maxdepth(5000) DEFPSIST(YES) replace
+    define qlocal(request1) maxdepth(50000) DEFPSIST(YES) replace
     define qlocal(request2) maxdepth(5000) DEFPSIST(YES) replace
     define qlocal(request3) maxdepth(5000) DEFPSIST(YES) replace
     define qlocal(request4) maxdepth(5000) DEFPSIST(YES) replace
