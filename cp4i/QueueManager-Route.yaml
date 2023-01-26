@@ -4,10 +4,10 @@ metadata:
   name: nativeha
   namespace: cp4i
 spec:
-  version: 9.3.0.1-r2
+  version: 9.3.0.1-r3
   license:
     accept: true
-    license: L-RJON-CD3JJU
+    license: L-RJON-CD3JKX
     use: "NonProduction"
   pki:
     keys:
