@@ -7,7 +7,7 @@ spec:
   version: 9.3.0.1-r2
   license:
     accept: true
-    license: L-RJON-CD3JKX
+    license: L-APIG-CAUEQC
     use: "NonProduction"
   pki:
     keys:
