@@ -42,7 +42,7 @@ spec:
          cpu: "2000m"
     storage:
       defaultClass: ibmc-block-gold
-      defaultDelete: true
+      defaultDeleteClaim: true
       persistedData:
         enabled: true
         size: 20Gi
