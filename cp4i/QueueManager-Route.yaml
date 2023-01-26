@@ -1,0 +1,79 @@
+apiVersion: mq.ibm.com/v1beta1
+kind: QueueManager
+metadata:
+  name: nativeha
+  namespace: cp4i
+spec:
+  version: 9.3.0.0-r1
+  license:
+    accept: true
+    license: L-RJON-CD3JKX
+    use: "NonProduction"
+  pki:
+    keys:
+    - name: default
+      secret:
+        secretName: nativehacert
+        items:
+          - tls.key
+          - tls.crt
+  web:
+    enabled: true
+  queueManager:
+    name: NATIVEHA
+    mqsc:
+      - configMap:
+          name: nativehamqsc
+          items:
+            - nativeha.mqsc
+    ini:
+    - configMap:
+        name: nativeha-qm-ini
+        items:
+        - nativeha.ini
+    availability:
+      type: NativeHA
+    resources:
+       requests:
+         memory: "2Gi"
+         cpu: "1000m"
+       limits:
+         memory: "4Gi"
+         cpu: "2000m"
+    storage:
+      defaultClass: ibmc-block-gold
+      defaultDelete: true
+      persistedData:
+        enabled: true
+        size: 20Gi
+        type: persistent-claim
+      queueManager:
+        size: 20Gi
+        type: persistent-claim
+      recoveryLogs:
+        enabled: true
+        size: 20Gi
+        type: persistent-claim
+  template:
+    pod:
+      containers:
+        - env:
+            - name: MQSNOAUT
+              value: 'yes'
+          name: qmgr
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: mq-traffic-mq-externalqmgr-ibm-mq-qm
+  namespace: cp4i
+spec:
+  host: mqexternalchl.chl.mq.ibm.com
+  to:
+    kind: Service
+    name: nativeha-ibm-mq
+  port:
+    targetPort: 1414
+  tls:
+    termination: passthrough
+  wildcardPolicy: None
