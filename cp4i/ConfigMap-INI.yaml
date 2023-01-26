@@ -6,9 +6,9 @@ metadata:
 data:
   nativeha.ini: |
    Log:
-      LogPrimaryFiles=15
-      LogSecondaryFiles=20
-      LogBufferPages=1024
+      LogPrimaryFiles=5
+      LogSecondaryFiles=5
+      LogBufferPages=2048
    Channels:
-       MaxChannels= 200
+       MaxChannels= 400
        MQIBindType=FASTPATH
