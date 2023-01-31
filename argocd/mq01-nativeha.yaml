@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nativeha
+  namespace: argocd
+spec:
+  destination:
+    namespace: cp4i
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    path: cp4i/nativeha
+    repoURL: 'https://github.com/LearnCP4I/mq-qm01.git'
+    targetRevision: HEAD
+  syncPolicy:
+    automated: {}
