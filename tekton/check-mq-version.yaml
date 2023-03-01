@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: dspmever
+spec:
+  steps:
+    - name: echo
+      image: icr.io/ibm-messaging/mq:9.3.0.0-r1
+      script: |
+        #!/bin/sh
+        dspmqver    
+---
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: check-mq-version
+spec:
+  taskRef:
+    name: dspmever

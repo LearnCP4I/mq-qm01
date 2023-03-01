@@ -1,0 +1,60 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: oc-get
+spec:
+  params:
+  - name: qmname
+    type: string
+  steps:
+    - name: oc-get
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      script: |
+        #!/bin/bash
+        pod_name=$(oc get pods --selector=app.kubernetes.io/component=integration,app.kubernetes.io/instance=$(params.qmname),app.kubernetes.io/name=ibm-mq --field-selector=status.phase=Running --no-headers=true | awk '$2 == "1/1" {print $1}')  
+        container_name=$(oc get pod $pod_name --template='{{range .status.containerStatuses}}{{if .state.running}}{{.name}}{{"\n"}}{{end}}{{end}}')
+        oc exec -it $pod_name -c $container_name -- dspmq
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: oc-status
+spec:
+  steps:
+    - name: oc-status 
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      script: |
+        #!/bin/bash
+        oc version   
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: oc-commands
+spec:
+  params:
+  - name: qmname
+    type: string
+  tasks:
+    - name: oc-status
+      taskRef:
+        name: oc-status
+    - name: oc-get
+      runAfter:
+        - oc-status
+      taskRef:
+        name: oc-get
+      params:
+      - name: qmname
+        value: $(params.qmname)
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: oc-commands-run
+spec:
+  pipelineRef:
+    name: oc-commands
+  params:
+  - name: qmname
+    value: "nativeha"

@@ -55,4 +55,15 @@ data:
     SET CHLAUTH(SYSTEM.DEF.SVRCONN) TYPE(ADDRESSMAP) ADDRESS(*) USERSRC(CHANNEL)
     SET CHLAUTH('*') TYPE(BLOCKUSER) USERLIST(*MQADMIN) ACTION(REMOVE)
     REFRESH SECURITY TYPE(CONNAUTH)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deltamqsc
+  namespace: cp4i
+data:
+  delta.mqsc: |
+    define qlocal(TESTQ1) maxdepth(5000) DEFPSIST(YES) replace
+    define qlocal(TESTQ2) maxdepth(5000) DEFPSIST(YES) replace
+
 

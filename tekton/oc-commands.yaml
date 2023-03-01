@@ -1,0 +1,81 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: oc-get
+spec:
+  params:
+  - name: resource
+    type: string
+  - name: token
+    type: string
+  - name: server_url
+    type: string
+  steps:
+    - name: oc-get
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      script: |
+        #!/bin/bash
+        oc login  --insecure-skip-tls-verify  --token=$(params.token) --server=$(params.server_url)
+        oc get  $(params.resource)  
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: oc-status
+spec:
+  params:
+  - name: resource
+    type: string
+  steps:
+    - name: oc-status 
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      script: |
+        #!/bin/bash
+        oc version   
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: oc-commands
+spec:
+  params:
+  - name: resource
+    type: string
+  - name: server_url
+    type: string
+  - name: token
+    type: string
+  tasks:
+    - name: oc-status
+      taskRef:
+        name: oc-status
+      params:
+      - name: resource
+        value: $(params.resource)       
+    - name: oc-get
+      runAfter:
+        - oc-status
+      taskRef:
+        name: oc-get
+      params:
+      - name: resource
+        value: $(params.resource)       
+      - name: token
+        value: $(params.token)       
+      - name: server_url
+        value: $(params.server_url)       
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: oc-commands-run
+spec:
+  pipelineRef:
+    name: oc-commands
+  params:
+  - name: resource
+    value: "pods" 
+  - name: token
+    value: "sha256~80rMoRnYDOvA9T9v67l1fDYWED-PBAfhqRldDLnqAVE"
+  - name: server_url
+    value: "https://c130-e.us-south.containers.cloud.ibm.com:32606"
