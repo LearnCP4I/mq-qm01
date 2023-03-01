@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: oc-get
+  name: runmqsc-from-configmap
 spec:
   params:
   - name: qmname
@@ -25,21 +25,9 @@ spec:
       name: $(params.configmap-name)
 ---
 apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: oc-status
-spec:
-  steps:
-    - name: oc-status 
-      image: registry.redhat.io/openshift4/ose-cli:latest
-      script: |
-        #!/bin/bash
-        oc version   
----
-apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: oc-commands
+  name: runmqsc-from-configmap
 spec:
   params:
   - name: qmname
@@ -47,29 +35,11 @@ spec:
   - name: configmap-name
     type: string
   tasks:
-    - name: oc-status
+    - name: runmqsc-from-configmap
       taskRef:
-        name: oc-status
-    - name: oc-get
-      runAfter:
-        - oc-status
-      taskRef:
-        name: oc-get
+        name: runmqsc-from-configmap
       params:
       - name: qmname
         value: $(params.qmname)
       - name: configmap-name
         value: $(params.configmap-name)
----
-apiVersion: tekton.dev/v1beta1
-kind: PipelineRun
-metadata:
-  name: oc-commands-run
-spec:
-  pipelineRef:
-    name: oc-commands
-  params:
-  - name: qmname
-    value: "nativeha"
-  - name: configmap-name
-    value: "deltamqsc"

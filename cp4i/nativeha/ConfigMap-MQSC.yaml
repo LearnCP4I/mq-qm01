@@ -65,5 +65,27 @@ data:
   delta.mqsc: |
     define qlocal(TESTQ1) maxdepth(5000) DEFPSIST(YES) replace
     define qlocal(TESTQ2) maxdepth(5000) DEFPSIST(YES) replace
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: display-status-mqsc
+  namespace: cp4i
+data:
+  delta.mqsc: |
+    DISPLAY PUBSUB ALL
+    DISPLAY QMSTATUS ALL
+    DISPLAY CHSTATUS(*) ALL
+    DISPLAY LSSTATUS(*) ALL
+    DISPLAY SVSTATUS(*) ALL
+    DISPLAY SBSTATUS(*) ALL
+    DISPLAY CONN(*) TYPE(*) ALL
+    DISPLAY QSTATUS(*) TYPE(QUEUE) ALL
+    DISPLAY QSTATUS(*) TYPE(HANDLE) ALL
+    DISPLAY TPSTATUS('#') TYPE(PUB) ALL
+    DISPLAY TPSTATUS('#') TYPE(SUB) ALL
+    DISPLAY TPSTATUS('#') TYPE(TOPIC) ALL
+
+
 
 
